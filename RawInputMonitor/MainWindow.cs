@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -53,6 +53,11 @@ namespace RawInputMonitor
                         fancyName = "Sinden Lightgun Black";
                     else if (device.ProductId == 0x0F39)
                         fancyName = "Sinden Lightgun Player 2";
+                }
+                // DolphinBar
+                else if (device.VendorId == 0x0079 && device.ProductId == 0x1802)
+                {
+                    fancyName = "Mayflash DolphinBar";
                 }
             }
             catch (Exception e)
