@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -86,7 +86,22 @@ namespace RawInputMonitor
             return fancyName;
         }
 
-        private void UpdateDeviceList()
+        private void DeviceListAdd(RawInputDevice device)
+        {
+            string vid = "0000";
+            string pid = "0000";
+
+            if (device.DevicePath != null)
+            {
+                vid = device.VendorId.ToString("X4");
+                pid = device.ProductId.ToString("X4");
+            }
+
+            string[] row = { RawInputDeviceHandle.GetRawValue(device.Handle).ToString("X8"), device.DeviceType.ToString(), vid, pid, device.ProductName, device.ManufacturerName, "?", "?", "?", (screenWidth / 2).ToString(), (screenHeight / 2).ToString(), GetFancyDeviceName(device), device.DevicePath };
+            table.Rows.Add(row);
+        }
+
+        private void DeviceListUpdate()
         {
             var devices = RawInputDevice.GetDevices();
             var keyboards = devices.OfType<RawInputKeyboard>();
@@ -95,16 +110,10 @@ namespace RawInputMonitor
             table.Rows.Clear();
 
             foreach (var device in mice)
-            {
-                string[] row = { RawInputDeviceHandle.GetRawValue(device.Handle).ToString("X8"), device.DeviceType.ToString(), device.VendorId.ToString("X4"), device.ProductId.ToString("X4"), device.ProductName.ToString(), device.ManufacturerName.ToString(), "?", "?", "?", (screenWidth / 2).ToString(), (screenHeight / 2).ToString(), GetFancyDeviceName(device), device.DevicePath.ToString() };
-                table.Rows.Add(row);
-            }
+                DeviceListAdd(device);
 
             foreach (var device in keyboards)
-            {
-                string[] row = { RawInputDeviceHandle.GetRawValue(device.Handle).ToString("X8"), device.DeviceType.ToString(), device.VendorId.ToString("X4"), device.ProductId.ToString("X4"), device.ProductName.ToString(), device.ManufacturerName.ToString(), "?", "?", "?", (screenWidth / 2).ToString(), (screenHeight / 2).ToString(), GetFancyDeviceName(device), device.DevicePath.ToString() };
-                table.Rows.Add(row);
-            }
+                DeviceListAdd(device);
 
             table.AutoResizeColumns(DataGridViewAutoSizeColumnsMode.AllCells);
         }
@@ -202,7 +211,7 @@ namespace RawInputMonitor
             else if (m.Msg == WM_DEVICECHANGE)
             {
                 if ((int)m.WParam == DBT_DEVNODES_CHANGED)
-                    UpdateDeviceList();
+                    DeviceListUpdate();
             }
             
             base.WndProc(ref m);
@@ -220,7 +229,7 @@ namespace RawInputMonitor
             this.Text = $"Raw Input Monitor V{v.Major}.{v.Minor}";
 
             // Get devices
-            UpdateDeviceList();
+            DeviceListUpdate();
 
             // Get our handle
             int pid = Process.GetCurrentProcess().Id;
