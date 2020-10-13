@@ -14,7 +14,7 @@ namespace RawInputMonitor
         private int screenWidth = (int)SystemParameters.PrimaryScreenWidth;
         private int screenHeight = (int)SystemParameters.PrimaryScreenHeight;
         private const int WM_INPUT = 0x00FF;
-        private const int WM_DEVICECHANGE = 537;
+        private const int WM_DEVICECHANGE = 0x0219;
         private const int DBT_DEVNODES_CHANGED = 0x0007;
 
         public MainWindow()
@@ -24,8 +24,7 @@ namespace RawInputMonitor
 
         private void Log(string s)
         {
-            txtLog.AppendText(s);
-            txtLog.AppendText(Environment.NewLine);
+            txtLog.AppendText(s + "\r\n");
         }
 
         private string GetFancyDeviceName(RawInputDevice device)
