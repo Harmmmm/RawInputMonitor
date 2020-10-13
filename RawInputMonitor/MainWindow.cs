@@ -129,8 +129,10 @@ namespace RawInputMonitor
                 {
                     case RawInputMouseData mouse:
                         string handleM = "00000000";
-                        if (mouse.Device.Handle != null)
+
+                        if (mouse.Device != null && mouse.Device.Handle != null)
                             handleM = RawInputDeviceHandle.GetRawValue(mouse.Device.Handle).ToString("X8");
+
                         var nameM = GetFancyDeviceName(mouse.Device);
                         var mode = mouse.Mouse.Flags;
                         var x = mouse.Mouse.LastX;
@@ -181,8 +183,10 @@ namespace RawInputMonitor
                         break;
                     case RawInputKeyboardData keyboard:
                         string handleK = "00000000";
-                        if (keyboard.Device.Handle != null)
+
+                        if (keyboard.Device!= null && keyboard.Device.Handle != null)
                             handleK = RawInputDeviceHandle.GetRawValue(keyboard.Device.Handle).ToString("X8");
+
                         var nameK = GetFancyDeviceName(keyboard.Device);
 
                         // Log event?
