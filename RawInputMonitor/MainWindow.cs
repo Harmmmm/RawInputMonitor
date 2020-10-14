@@ -32,9 +32,9 @@ namespace RawInputMonitor
             string fancyName = "";
 
             if (device == null)
-                return "Unknown device (NULL)";
+                return "Unknown device";
 
-            try
+            if (device.DevicePath != null)
             {
                 // Aimtrak
                 if (device.VendorId == 0xD209 && device.ProductId >= 0x1601 && device.ProductId <= 0x1608)
@@ -59,28 +59,16 @@ namespace RawInputMonitor
                     fancyName = "Mayflash DolphinBar";
                 }
             }
-            catch (Exception e)
-            {
-                Log($"Exception {e}");
-            }
 
-            try
+            // Other
+            if (fancyName == "")
             {
-                // Other
-                if (fancyName == "")
-                {
-                    string manufacturer = device.ManufacturerName.Trim();
+                string manufacturer = device.ManufacturerName.Trim();
 
-                    if (manufacturer == "(Standard keyboards)" || device.ProductName.Contains(manufacturer))
-                        manufacturer = "";
+                if (manufacturer == "(Standard keyboards)" || device.ProductName.Contains(manufacturer))
+                    manufacturer = "";
 
-                    fancyName = String.Format("{0} {1}", manufacturer, device.ProductName.Trim()).Trim();
-                }
-            }
-            catch (Exception e)
-            {
-                Log($"Exception {e}");
-                return "Unknown device (nameless)";
+                fancyName = String.Format("{0} {1}", manufacturer, device.ProductName.Trim()).Trim();
             }
 
             return fancyName;
@@ -138,7 +126,7 @@ namespace RawInputMonitor
                     case RawInputMouseData mouse:
                         string handleM = "00000000";
 
-                        if (mouse.Device != null && mouse.Device.Handle != null)
+                        if (mouse.Device != null)
                             handleM = RawInputDeviceHandle.GetRawValue(mouse.Device.Handle).ToString("X8");
 
                         var nameM = GetFancyDeviceName(mouse.Device);
@@ -192,7 +180,7 @@ namespace RawInputMonitor
                     case RawInputKeyboardData keyboard:
                         string handleK = "00000000";
 
-                        if (keyboard.Device!= null && keyboard.Device.Handle != null)
+                        if (keyboard.Device != null)
                             handleK = RawInputDeviceHandle.GetRawValue(keyboard.Device.Handle).ToString("X8");
 
                         var nameK = GetFancyDeviceName(keyboard.Device);
